@@ -1,9 +1,9 @@
-import path from "path";
 import { killProcess, logger } from "./utils/lib.js";
-import { configDotenv } from "dotenv";
+import path from "path"
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers"
 import { globalState } from "./services/state.js";
+import { RunCommand } from "./command/index.js";
 
 async function main() {
   const argv = yargs(hideBin(process.argv))
@@ -12,6 +12,11 @@ async function main() {
       type: 'string',
       demandOption: true,
       description: 'Path to the target file',
+    })
+    .option('generate', {
+      alias: 'g',
+      type: 'string',
+      description: 'Generate boilerplate for a new script',
     })
     .option('withTunnel', {
       alias: 'w',
@@ -22,19 +27,15 @@ async function main() {
     .argv;
 
   try {
-    const targetFolder = argv.target
-    const targetBasepath = path.dirname(new URL(import.meta.url).pathname) + '/' + targetFolder
-
-    global.__dirname = targetBasepath
-
-    configDotenv({
-      path: targetBasepath + '/.env'
-    })
-
-    globalState.set('withTunnel', argv.withTunnel)
-
-    const importedModule = await import(`./${targetFolder}/index.js`)
-    await importedModule.default()
+    let command
+    if (argv.generate) {
+      // command = new GenerateCommand()
+    } else if (argv.target) {
+      command = new RunCommand()
+    }
+    command.setBasePath(path.dirname(new URL(import.meta.url).pathname))
+    command.setArgv(argv)
+    await command.start()
   } catch (error) {
     const stack = error.stack
     logger(stack, 'ERROR')
