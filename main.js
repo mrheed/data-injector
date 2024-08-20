@@ -3,14 +3,13 @@ import path from "path"
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers"
 import { globalState } from "./services/state.js";
-import { RunCommand } from "./command/index.js";
+import { RunCommand, GenerateCommand } from "./command/index.js";
 
 async function main() {
   const argv = yargs(hideBin(process.argv))
     .option('target', {
       alias: 't',
       type: 'string',
-      demandOption: true,
       description: 'Path to the target file',
     })
     .option('generate', {
@@ -29,9 +28,11 @@ async function main() {
   try {
     let command
     if (argv.generate) {
-      // command = new GenerateCommand()
+      command = new GenerateCommand()
     } else if (argv.target) {
       command = new RunCommand()
+    } else {
+      throw new Error('No command provided')
     }
     command.setBasePath(path.dirname(new URL(import.meta.url).pathname))
     command.setArgv(argv)

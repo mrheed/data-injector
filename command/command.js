@@ -1,6 +1,7 @@
 class Command {
   constructor() {
     this.name = 'command'
+    this.description = 'Base command'
     this.argv = {}
     this.basePath = ''
   }
