@@ -46,10 +46,11 @@ async function main() {
 }
 
 async function handleExitSignal(signal) {
-  if (globalState.get('withTunnel')) {
-    logger(`Closing tunnel`);
-    globalState.get('tunnel.server').close();
-  }
+  // if (globalState.get('withTunnel')) {
+  //   logger(`Closing tunnel`);
+  //   console.log(globalState)
+  //   globalState.get('tunnel.tunnelServer').close();
+  // }
   logger(`${signal} Detected, exiting main process`);
   process.exit(0);
 }
